@@ -3,7 +3,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material';
 
 import { TodoService } from '../todo.service';
 import { Todo } from './../todo.interface';
- import { EdittaskComponent } from './../edittask/edittask.component';
+import { EdittaskComponent } from './../edittask/edittask.component';
 
 
 
@@ -16,6 +16,7 @@ import { Todo } from './../todo.interface';
 export class TasksComponent implements OnInit {
   
   todos: Todo[];
+  displayOrNot: boolean = true;
 
   constructor(
     public dialog: MatDialog,
@@ -25,9 +26,19 @@ export class TasksComponent implements OnInit {
 
   ngOnInit(): void {
     //TODO FIND THE WAY TO REFACTOR THIS CODE
+    this.getAllTodos();
+  }
+
+  getAllTodos(){
     this.myData.getTodos()
       .subscribe(
-        (data: Todo[]) =>  this.todos = data,
+        (data: Todo[]) =>  {
+          this.todos = data;
+          if(this.todos.length > 0)
+            this.displayOrNot = false;
+          else
+            this.displayOrNot = true;
+        },
         (error: any)   => console.log(error),
         ()             => console.log('all data gets')
       );
@@ -37,7 +48,9 @@ export class TasksComponent implements OnInit {
   deleteItem(_id: string){
     this.myData.deleteTodo(_id)
       .subscribe(
-        (res: any) => location.reload(),
+        (res: any) => {
+          this.getAllTodos();
+        },
         (error: any) => console.log(error)
       )
   }

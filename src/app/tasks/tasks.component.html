@@ -1,9 +1,11 @@
 <mat-list>
-  <span *ngIf="(todos.length == 0)">
-      <h3 mat-subheader>0 todo found on your list</h3>
-  </span>
-  <span *ngIf="(todos.length > 0)">
-      <h3 mat-subheader>You have ({{todos.length}}) todo<span *ngIf="(todos.length > 0)">s</span> in your list.</h3>
+  <span *ngIf="displayOrNot; then condition1 else condition2"></span>
+  <ng-template #condition1>
+    <h3 mat-subheader>0 todo found on your list</h3>
+  </ng-template>
+  
+  <ng-template #condition2>
+      <h3 mat-subheader>You have ({{todos.length}}) todo<span *ngIf="displayOrNot">s</span> in your list.</h3>
       <mat-list-item *ngFor="let todo of todos">
         <mat-icon mat-list-icon>watch_later</mat-icon>
         <h4 mat-line>{{todo.title}}</h4>
@@ -19,5 +21,5 @@
         </span>
         <mat-divider></mat-divider>
       </mat-list-item>
-  </span>
+  </ng-template>
 </mat-list>

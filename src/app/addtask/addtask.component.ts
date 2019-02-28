@@ -1,5 +1,7 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { Component, OnInit} from '@angular/core';
+import { MatDialogRef } from '@angular/material';
+import { Router } from '@angular/router';
+
 import { TodoService } from '../todo.service';
 import { Todo } from './../todo.interface';
 
@@ -14,33 +16,60 @@ export class AddtaskComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<AddtaskComponent>,
-    private myData: TodoService
+    private myData: TodoService,
+    private router: Router,
   ){}
 
-  todos = [];
+  todos: Todo[];
+  displayOrNot: boolean = true;
+  currentUrl: string;
 
-    ngOnInit() {
-        this.myData.getTodos()
-        .subscribe(
-          (data: Todo[]) =>  this.todos = data,
-          (error: any)   => console.log(error),
-          ()             => console.log('all todos gets')
-        );
-    }
+  ngOnInit() {
+    this.currentUrl = this.router.url;
+  }
 
-    onCancel(): void {
-      this.dialogRef.close();
-    }
+  getAllTodos(){
+    this.myData.getTodos()
+      .subscribe(
+        (data: Todo[]) =>  {
+        this.todos = data;
+        if(this.todos.length > 0)
+          this.displayOrNot = false;
+        else
+          this.displayOrNot = true;
+        },
+        (error: any) => console.log(error),
+        () => console.log('all data gets')
+      );
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
     
-    onSave(formData: any){
-      let newTodo: any = { title: formData.title, description: formData.description };
-      this.myData.addTodo(newTodo)
-        .subscribe(
-          (data: Todo) => location.reload(),
+  onSave(formData: any){
+    this.dialogRef.close();
+
+    let newTodo: any = { title: formData.title, description: formData.description };
+    this.myData.addTodo(newTodo)
+      .subscribe(
+        (resp: Todo) => {
+          this.getAllTodos();
+          switch(this.currentUrl){
+            case '/':
+              this.router.navigate(['/todos']);
+              break;
+            case '/todos':
+              this.router.navigate(['/']);
+              break;
+            default:
+              this.router.navigate(['/']);
+              break;
+          }
+        },
           (error) => console.log(error)
         );
-      this.dialogRef.close();
-    }
+  }
 
 }
 

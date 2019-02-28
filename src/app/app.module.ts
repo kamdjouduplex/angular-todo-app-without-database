@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
@@ -17,6 +18,16 @@ import { TodoService } from './todo.service';
 import { from } from 'rxjs';
 import { EdittaskComponent } from './edittask/edittask.component';
 
+const routes: Routes = [
+  {
+    path: '',
+    component: TasksComponent
+  },
+  {
+    path: 'todos',
+    component: TasksComponent
+  }
+];
 
 @NgModule({
   declarations: [
@@ -27,6 +38,7 @@ import { EdittaskComponent } from './edittask/edittask.component';
     EdittaskComponent
   ],
   imports: [
+    RouterModule.forRoot(routes),
     BrowserModule,
     MatToolbarModule,
     MatButtonModule,
